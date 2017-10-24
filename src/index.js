@@ -9,7 +9,7 @@ import hapiSwagger from 'hapi-swagger';
 import colors from 'colors';
 
 const server = new Hapi.Server();
-server.connection({port:5358});
+server.connection({port:5333});
 
 server.route( {
     method: 'GET',
@@ -19,6 +19,7 @@ server.route( {
         _.forEach(server.table()[0].table, o => {
             helps.push(`${o.path}`.underline.green.inverse + `\n` + ` ${o.settings.description}`);
         });
+        reply(helps);
     },
     config: {
         description: "현재 보고 있는 도움말이지 말입니다.",
@@ -35,7 +36,7 @@ server.route( {
             'id': 'ctkim',
             'email': 'changtae.kim@gmail.com',
             'username': 'Chang Tae Kim'
-     });
+        } );
     },
     config: {
         description: "유저 정보를 보냅니다.",
@@ -81,7 +82,7 @@ server.register(
     },
     {
         register: hapiSwagger,
-    options: {
+        options: {
             info: {
                 'title': 'API Documentation',
                 'version': '1.0.0'
@@ -95,8 +96,7 @@ server.register(
     server.start( err => {
 
         if (err) {
-        // notify.sendMessage('Server starting ', 'error !', 2); // 분당 2회 간격으로 메시지 전송
-        throw err;
+            throw err;
         }
         server.log('info', 'Server running at: ' + server.info.uri);
 
