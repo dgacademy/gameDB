@@ -8,6 +8,10 @@ import vision from 'vision';
 import hapiSwagger from 'hapi-swagger';
 import colors from 'colors';
 
+import mongodb from 'hapi-mongodb';
+import dbconfig from '../dbconfig.json';
+import Boom from 'boom';
+
 const server = new Hapi.Server();
 server.connection({port:5333});
 
@@ -30,13 +34,26 @@ server.route( {
 
 server.route( {
     method: 'GET',
-    path: '/users/{userid}',
+    path: '/user/{email*}',
     handler: (request, reply) => {
-        reply( {
-            'id': 'ctkim',
-            'email': 'changtae.kim@gmail.com',
-            'username': 'Chang Tae Kim'
-        } );
+        let db = request.server.plugins['hapi-mongodb'].db;
+        db.collection('users').findOne({'email': request.params.email}, (err, ret) => {
+            if (err)
+                return reply(Boom.internal('Internal Database Error', err));
+            console.log(ret);
+            let user = {
+                email: ret.email,
+                userName: ret.userName,
+                nickName: ret.nickName
+            };
+            reply(user);
+        });
+
+        // reply( {
+        //     'id': 'ctkim',
+        //     'email': 'changtae.kim@gmail.com',
+        //     'username': 'Chang Tae Kim'
+        // } );
     },
     config: {
         description: "유저 정보를 보냅니다.",
@@ -88,6 +105,10 @@ server.register(
                 'version': '1.0.0'
             }
         }
+    },
+    {
+        register: mongodb,
+        options: dbconfig
     }
 ], err => {
     if (err) {
@@ -98,6 +119,7 @@ server.register(
         if (err) {
             throw err;
         }
+        console.log('Server started !');
         server.log('info', 'Server running at: ' + server.info.uri);
 
         // mainLoop.addTask(arbitor);

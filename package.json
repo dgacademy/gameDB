@@ -4,7 +4,7 @@
   "description": "game DB for PUN",
   "main": "index.js",
   "scripts": {
-    "start": "npm run build && ./lib/index.js",
+    "start": "npm run build && node .\\lib\\index.js",
     "build": "babel src -d lib",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,6 +24,8 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.1"
+    "babel-preset-env": "^1.6.1",
+    "boom": "^6.0.0",
+    "hapi-mongodb": "^6.2.1"
   }
 }
