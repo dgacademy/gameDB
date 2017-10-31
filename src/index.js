@@ -86,7 +86,7 @@ server.route( {
 
 server.route( {
     method: 'POST',
-    path: '/user',
+    path: '/user/add',
     handler: (request, reply) => {
         let db = request.server.plugins['hapi-mongodb'].db;
         db.collection('users').findOne({'email':request.payload.email}, (err, ret) => {
@@ -115,8 +115,8 @@ server.route( {
 });
 
 server.route( {
-    method: 'PATCH',
-    path: '/user/{email*}',
+    method: 'POST', // 'PATCH', not supported in Unity!
+    path: '/user/update',
     handler: (request, reply) => {
         let user = {
             email: request.payload.email,
@@ -125,7 +125,7 @@ server.route( {
         };
 
         let db = request.server.plugins['hapi-mongodb'].db;
-        db.collection('users').update({'email': request.params.email}, user, (err, ret) => {
+        db.collection('users').update({'email': request.payload.email}, user, (err, ret) => {
             if (err)
                 return reply(Boom.internal('Internal Database error', err));
             reply();
@@ -139,11 +139,11 @@ server.route( {
 });
 
 server.route( {
-    method: 'DELETE',
-    path: '/user/{email*}',
+    method: 'POST', // 'DELETE', , not supported in Unity!
+    path: '/user/remove',
     handler: (request, reply) => {
         let db = request.server.plugins['hapi-mongodb'].db;
-        db.collection('users').remove({'email': request.params.email}, (err, ret) => {
+        db.collection('users').remove({'email': request.payload.email}, (err, ret) => {
             if (err)
                 return reply(Boom.internal('Internal Database error', err));
             reply();
